@@ -12,16 +12,11 @@ import {
   App,
 } from "obsidian";
 import { wait } from "src/util/util";
-import { appIcons } from "src/icons/appIcons";
 import { CommandPicker } from "src/modals/suggesterModals";
 import { cMenuSettingTab } from "src/settings/settingsTab";
 import { selfDestruct, cMenuPopover } from "src/modals/cMenuModal";
 import { cMenuSettings, DEFAULT_SETTINGS } from "src/settings/settingsData";
-import addIcons, {
-  addFeatherIcons,
-  addRemixIcons,
-  addBoxIcons,
-} from "src/icons/customIcons";
+import addIcons from "src/icons/customIcons";
 
 import { setMenuVisibility, setBottomValue } from "src/util/statusBarConstants";
 
@@ -105,11 +100,8 @@ export default class cMenuPlugin extends Plugin {
 
   async onload(): Promise<void> {
     console.log("cMenu v" + this.manifest.version + " loaded");
-    await this.loadSettings();
     addIcons();
-    addFeatherIcons(appIcons);
-    addRemixIcons(appIcons);
-    //addBoxIcons(appIcons);
+    await this.loadSettings();
     this.generateCommands();
     this.app.workspace.onLayoutReady(() => {
       setTimeout(() => {
@@ -210,12 +202,18 @@ export default class cMenuPlugin extends Plugin {
         suffix: "\n```\n",
       },
     };
+    const commandIcons: Record<string, string> = {
+      underline: "underline",
+      superscript: "superscript",
+      subscript: "subscript",
+      codeblock: "square-code",
+    };
     // Add new commands
     Object.keys(commandsMap).forEach((type) => {
       this.addCommand({
         id: `${type}`,
         name: `Toggle ${type}`,
-        icon: `${type}-glyph`,
+        icon: commandIcons[type],
         callback: async () => {
           const activeLeaf =
             this.app.workspace.getActiveViewOfType(MarkdownView);
@@ -262,7 +260,7 @@ export default class cMenuPlugin extends Plugin {
         this.statusBarIcon.parentElement.getBoundingClientRect();
       const statusBarIconRect = this.statusBarIcon.getBoundingClientRect();
 
-      const menu = new Menu(this.app).addItem((item) => {
+      const menu = new Menu().addItem((item) => {
         item.setTitle("Hide & Show");
 
         const itemDom = (item as any).dom as HTMLElement;

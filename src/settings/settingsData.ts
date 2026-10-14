@@ -6,7 +6,6 @@ export interface cMenuSettings {
   aestheticStyle: string;
   menuCommands: Command[];
   appendMethod: string;
-  shouldShowMenuOnSelect: boolean;
   cMenuVisibility: boolean;
   cMenuBottomValue: number;
   cMenuNumRows: number;
@@ -33,17 +32,17 @@ export const DEFAULT_SETTINGS: cMenuSettings = {
     {
       id: "cmenu-plugin:underline",
       name: "cMenu: Toggle underline",
-      icon: "underline-glyph",
+      icon: "underline",
     },
     {
       id: "cmenu-plugin:superscript",
       name: "cMenu: Toggle superscript",
-      icon: "superscript-glyph",
+      icon: "superscript",
     },
     {
       id: "cmenu-plugin:subscript",
       name: "cMenu: Toggle subscript",
-      icon: "subscript-glyph",
+      icon: "subscript",
     },
     {
       id: "cmenu-plugin:editor:toggle-code",
@@ -53,7 +52,7 @@ export const DEFAULT_SETTINGS: cMenuSettings = {
     {
       id: "cmenu-plugin:codeblock",
       name: "cMenu: Toggle codeblock",
-      icon: "codeblock-glyph",
+      icon: "square-code",
     },
     {
       id: "cmenu-plugin:editor:toggle-blockquote",
@@ -62,7 +61,6 @@ export const DEFAULT_SETTINGS: cMenuSettings = {
     },
   ],
   appendMethod: "workspace",
-  shouldShowMenuOnSelect: false,
   cMenuVisibility: true,
   cMenuBottomValue: 4.25,
   cMenuNumRows: 9,

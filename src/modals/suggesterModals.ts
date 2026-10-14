@@ -1,6 +1,11 @@
 import type cMenuPlugin from "src/plugin/main";
-import { appIcons } from "src/icons/appIcons";
-import { Command, setIcon, FuzzyMatch, FuzzySuggestModal } from "obsidian";
+import {
+  Command,
+  setIcon,
+  getIconIds,
+  FuzzyMatch,
+  FuzzySuggestModal,
+} from "obsidian";
 
 class ChooseFromIconList extends FuzzySuggestModal<string> {
   plugin: cMenuPlugin;
@@ -24,15 +29,13 @@ class ChooseFromIconList extends FuzzySuggestModal<string> {
   }
 
   getItems(): string[] {
-    return appIcons;
+    return getIconIds();
   }
 
   getItemText(item: string): string {
     return this.capitalJoin(
       item
-        .replace("feather-", "")
-        .replace("remix-", "")
-        .replace("bx-", "")
+        .replace(/^lucide-/, "")
         .replace(/([A-Z])/g, " $1")
         .trim()
         .replace(/-/gi, " ")

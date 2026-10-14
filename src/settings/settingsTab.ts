@@ -3,7 +3,6 @@ import { CommandPicker } from "src/modals/suggesterModals";
 import { App, Setting, PluginSettingTab } from "obsidian";
 import { APPEND_METHODS, AESTHETIC_STYLES } from "src/settings/settingsData";
 import { selfDestruct, cMenuPopover } from "src/modals/cMenuModal";
-import Sortable from "sortablejs";
 import { debounce } from "obsidian";
 
 export class cMenuSettingTab extends PluginSettingTab {
@@ -123,22 +122,47 @@ export class cMenuSettingTab extends PluginSettingTab {
     const cMenuCommandsContainer = containerEl.createEl("div", {
       cls: "cMenuSettingsTabsContainer",
     });
-    Sortable.create(cMenuCommandsContainer, {
-      animation: 500,
-      ghostClass: "sortable-ghost",
-      chosenClass: "sortable-chosen",
-      dragClass: "sortable-drag",
-      dragoverBubble: true,
-      forceFallback: true,
-      fallbackClass: "sortable-fallback",
-      easing: "cubic-bezier(1, 0, 0, 1)",
-      onSort: (command) => {
-        const arrayResult = this.plugin.settings.menuCommands;
-        const [removed] = arrayResult.splice(command.oldIndex, 1);
-        arrayResult.splice(command.newIndex, 0, removed);
-        this.plugin.saveSettings();
-        console.log(arrayResult);
-      },
+    // Drag and drop reordering
+    let draggedEl: HTMLElement | null = null;
+    let oldIndex = -1;
+    const indexOf = (el: HTMLElement) =>
+      Array.from(cMenuCommandsContainer.children).indexOf(el);
+    cMenuCommandsContainer.addEventListener("dragstart", (event) => {
+      draggedEl = (event.target as HTMLElement).closest(".cMenuCommandItem");
+      if (!draggedEl) return;
+      oldIndex = indexOf(draggedEl);
+      event.dataTransfer?.setData("text/plain", "");
+      draggedEl.addClass("sortable-chosen");
+      // Let the browser snapshot the drag image before dimming the item
+      setTimeout(() => draggedEl?.addClass("sortable-ghost"));
+    });
+    cMenuCommandsContainer.addEventListener("dragover", (event) => {
+      if (!draggedEl) return;
+      event.preventDefault();
+      const target = (event.target as HTMLElement).closest(
+        ".cMenuCommandItem"
+      ) as HTMLElement | null;
+      if (!target || target === draggedEl) return;
+      const rect = target.getBoundingClientRect();
+      const after = event.clientY > rect.top + rect.height / 2;
+      cMenuCommandsContainer.insertBefore(
+        draggedEl,
+        after ? target.nextSibling : target
+      );
+    });
+    cMenuCommandsContainer.addEventListener("drop", (event) => {
+      event.preventDefault();
+    });
+    cMenuCommandsContainer.addEventListener("dragend", () => {
+      if (!draggedEl) return;
+      draggedEl.removeClass("sortable-chosen", "sortable-ghost");
+      const newIndex = indexOf(draggedEl);
+      draggedEl = null;
+      if (newIndex === oldIndex) return;
+      const arrayResult = this.plugin.settings.menuCommands;
+      const [removed] = arrayResult.splice(oldIndex, 1);
+      arrayResult.splice(newIndex, 0, removed);
+      this.plugin.saveSettings();
     });
     this.plugin.settings.menuCommands.forEach((newCommand: any) => {
       const setting = new Setting(cMenuCommandsContainer)
@@ -163,7 +187,7 @@ export class cMenuSettingTab extends PluginSettingTab {
               );
             });
         });
-      setting.nameEl;
+      setting.settingEl.draggable = true;
     });
     const cDonationDiv = containerEl.createEl("div", {
       cls: "cDonationSection",
