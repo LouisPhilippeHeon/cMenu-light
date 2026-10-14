@@ -3,63 +3,62 @@ CMENU TOOLBAR
 ----------------------------------------------------------------*/
 
 #cMenuModalBar {
-  width: auto;
+  width: fit-content;
   height: auto;
-  padding: 3px;
-  display: grid;
+  padding: var(--size-4-2) var(--size-4-3);
   user-select: none;
-  border-radius: 6px;
+  border-radius: 32px;
   position: absolute;
-  transition: 200ms ease;
-  min-width: fit-content;
   justify-content: space-around;
   z-index: var(--layer-status-bar);
-  box-shadow: 0px 3px 32px rgb(31 38 135 / 15%);
+  box-shadow: 0 var(--size-4-1) var(--size-4-6) rgb(from var(--background-primary) r g b / 80%);
   border: 1px solid var(--background-modifier-border);
-}
-
-#cMenuModalBar .cMenuCommandItem {
-  margin: 2px;
-  border: none;
+  left: 0 !important;
+  right: 0;
+  max-width: 90%;
+  overflow-x: auto;
   display: flex;
-  cursor: pointer;
-  padding: 5px 6px;
-  box-shadow: none;
-  margin-left: 3px;
-  margin-right: 3px;
-  position: relative;
-  border-radius: 3px;
-  font-size: initial !important;
-  background-color: var(--background-primary-alt);
-}
+  justify-self: center;
 
-#cMenuModalBar button.cMenuCommandItem:hover {
-  background-color: var(--background-secondary);
-}
+  .cMenuCommandItem {
+    margin: 3px 2px;
+    box-shadow: none;
+    border-radius: 12px;
+    font-size: initial !important;
+    transition: background var(--anim-duration-fast) linear;
+    padding: var(--size-4-2);
 
-#cMenuModalBar button.cMenuCommandItem svg {
-  width: 1.3em;
-  height: 1.3em;
+    svg {
+      width: 1.3em;
+      height: 1.3em;
+    }
+
+    /* Fix issue with custom code block icon */
+    .codeblock-glyph path {
+      fill: currentColor;
+    }
+  }
+
+  .cMenuCommandItem:hover {
+    background-color: var(--background-modifier-hover);
+  }
 }
 
 /*----------------------------------------------------------------
 CMENU SETTINGS BUTTONS
 ----------------------------------------------------------------*/
 
-.modal.mod-settings
-  button:not(.mod-cta):not(.mod-warning).cMenuSettingsButton.cMenuSettingsButtonAdd,
+.modal.mod-settings button:not(.mod-cta):not(.mod-warning).cMenuSettingsButton.cMenuSettingsButtonAdd,
 button:not(.mod-cta):not(.mod-warning).cMenuSettingsButton.cMenuSettingsButtonAdd {
   background-color: var(--interactive-accent);
 }
 
-.modal.mod-settings
-  button:not(.mod-cta):not(.mod-warning).cMenuSettingsButton.cMenuSettingsButtonDelete,
+.modal.mod-settings button:not(.mod-cta):not(.mod-warning).cMenuSettingsButton.cMenuSettingsButtonDelete,
 button:not(.mod-cta):not(.mod-warning).cMenuSettingsButton.cMenuSettingsButtonDelete {
   background-color: #989cab;
 }
 
-.modal.mod-settings
-  button:not(.mod-cta):not(.mod-warning).cMenuSettingsButton.cMenuSettingsButtonRefresh,
+.modal.mod-settings button:not(.mod-cta):not(.mod-warning).cMenuSettingsButton.cMenuSettingsButtonRefresh,
 button:not(.mod-cta):not(.mod-warning).cMenuSettingsButton.cMenuSettingsButtonRefresh {
   background-color: var(--text-accent);
 }
@@ -122,12 +121,20 @@ CMENU CLASS CHANGES
 ----------------------------------------------------------------*/
 
 .cMenuGlassAesthetic {
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgb(from var(--background-secondary) r g b / 75%);
+  backdrop-filter: blur(6px);
+
+  .cMenuCommandItem {
+    background-color: transparent;
+  }
 }
 
 .cMenuDefaultAesthetic {
   background-color: var(--background-primary);
+
+  .cMenuCommandItem {
+    background-color: var(--background-primary-alt);
+  }
 }
 
 /*----------------------------------------------------------------
@@ -209,7 +216,6 @@ CMENU STATUS BAR BUTTONS
 ----------------------------------------------------------------*/
 
 .cMenu-statusbar-button {
-  cursor: pointer;
   display: flex;
   align-items: center;
   line-height: 1;
