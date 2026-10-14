@@ -25,11 +25,6 @@ export class cMenuSettingTab extends PluginSettingTab {
   display(): void {
     const { containerEl } = this;
     containerEl.empty();
-    containerEl.createEl("h1", { text: "cMenu" });
-    containerEl.createEl("p", { text: "Created by " }).createEl("a", {
-      text: "Chetachi 👩🏽‍💻",
-      href: "https://github.com/chetachiezikeuzor",
-    });
     containerEl.createEl("h2", { text: "Plugin Settings" });
     new Setting(containerEl)
       .setName("cMenu append method")
@@ -89,11 +84,12 @@ export class cMenuSettingTab extends PluginSettingTab {
           .setIcon("plus")
           .setTooltip("Add")
           .setClass("cMenuSettingsButton")
-          .setClass("cMenuSettingsButtonAdd")
           .onClick(() => {
             new CommandPicker(this.plugin, () => this.display()).open();
           });
       });
+    containerEl.createEl("h2", { text: "Commands" });
+
     const cMenuCommandsContainer = containerEl.createEl("div", {
       cls: "cMenuSettingsTabsContainer",
     });
@@ -116,7 +112,6 @@ export class cMenuSettingTab extends PluginSettingTab {
           event.clientY - rect.top
         );
       }
-      draggedEl.addClass("sortable-chosen");
       // Let the browser snapshot the drag image before dimming the item
       setTimeout(() => draggedEl?.addClass("sortable-ghost"));
     });
@@ -139,7 +134,7 @@ export class cMenuSettingTab extends PluginSettingTab {
     });
     cMenuCommandsContainer.addEventListener("dragend", () => {
       if (!draggedEl) return;
-      draggedEl.removeClass("sortable-chosen", "sortable-ghost");
+      draggedEl.removeClass("sortable-ghost");
       const newIndex = indexOf(draggedEl);
       draggedEl = null;
       if (newIndex === oldIndex) return;
@@ -171,39 +166,10 @@ export class cMenuSettingTab extends PluginSettingTab {
           this.plugin.settings.menuCommands.remove(newCommand);
           await this.plugin.saveSettings();
           this.display();
-          console.log(
-            `%cCommand '${newCommand.name}' was removed from cMenu`,
-            "color: #989cab"
-          );
         });
       const handleEl = itemEl.createDiv({ cls: "cMenuSettingsItemHandle" });
       setIcon(handleEl, "lucide-menu");
       handleEl.draggable = true;
     });
-    const cDonationDiv = containerEl.createEl("div", {
-      cls: "cDonationSection",
-    });
-
-    const credit = createEl("p");
-    const donateText = createEl("p");
-    donateText.appendText(
-      "If you like this Plugin and are considering donating to support continued development, use the button below!"
-    );
-    credit.appendText("Created with ❤️ by Chetachi");
-    credit.setAttribute("style", "color: var(--text-muted)");
-    cDonationDiv.appendChild(donateText);
-    cDonationDiv.appendChild(credit);
-
-    cDonationDiv.appendChild(
-      createDonateButton("https://www.buymeacoffee.com/chetachi")
-    );
   }
 }
-
-const createDonateButton = (link: string): HTMLElement => {
-  const a = createEl("a");
-  a.setAttribute("href", link);
-  a.addClass("buymeacoffee-chetachi-img");
-  a.innerHTML = `<img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=chetachi&button_colour=e3e7ef&font_colour=262626&font_family=Inter&outline_colour=262626&coffee_colour=ff0000" height="42px">`;
-  return a;
-};

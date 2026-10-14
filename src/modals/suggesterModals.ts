@@ -1,9 +1,7 @@
 import type cMenuPlugin from "src/plugin/main";
 import {
   Command,
-  setIcon,
   getIconIds,
-  FuzzyMatch,
   FuzzySuggestModal,
 } from "obsidian";
 
@@ -44,13 +42,6 @@ class ChooseFromIconList extends FuzzySuggestModal<string> {
     );
   }
 
-  renderSuggestion(icon: FuzzyMatch<string>, iconItem: HTMLElement): void {
-    const span = createSpan({ cls: "cMenuIconPick" });
-    iconItem.appendChild(span);
-    setIcon(span, icon.item);
-    super.renderSuggestion(icon, iconItem);
-  }
-
   async onChooseItem(item: string): Promise<void> {
     await addMenuCommand(this.plugin, this.command, item);
     this.onAdd();
@@ -62,7 +53,6 @@ async function addMenuCommand(
   command: Command,
   icon: string
 ): Promise<void> {
-  // Store a copy so the registered command itself is left untouched
   const prefix = `${plugin.manifest.name}: `;
   const name =
     command.id.startsWith(`${plugin.manifest.id}:`) &&

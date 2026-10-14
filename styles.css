@@ -13,7 +13,7 @@ CMENU TOOLBAR
   z-index: var(--layer-status-bar);
   box-shadow: 0 var(--size-4-1) var(--size-4-6) rgb(from var(--background-primary) r g b / 80%);
   border: 1px solid var(--background-modifier-border);
-  left: 0 !important;
+  left: 0;
   right: 0;
   max-width: 90%;
   overflow-x: auto;

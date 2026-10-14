@@ -1,6 +1,5 @@
 import type { cMenuSettings } from "src/settings/settingsData";
 import { App, Command, MarkdownView, ButtonComponent } from "obsidian";
-import { setMenuVisibility } from "src/util/statusBarConstants";
 
 export function selfDestruct() {
   let cMenuModalBar = document.getElementById("cMenuModalBar");
@@ -23,8 +22,8 @@ export function cMenuPopover(app: App, settings: cMenuSettings): void {
         : cMenu.addClass("cMenuGlassAesthetic");
       settings.appendMethod == "workspace"
         ? document.body
-            .querySelector(".mod-vertical.mod-root")
-            .insertAdjacentElement("afterbegin", cMenu)
+          .querySelector(".mod-vertical.mod-root")
+          .insertAdjacentElement("afterbegin", cMenu)
         : document.body.appendChild(cMenu);
       settings.menuCommands.forEach((item: Command) => {
         var button = new ButtonComponent(cMenu);
@@ -55,7 +54,13 @@ export function cMenuPopover(app: App, settings: cMenuSettings): void {
         generateMenu();
       }
       // Hide the menu while the focused note is in reading mode
-      setMenuVisibility(Markdown.getMode() !== "preview");
+      let cMenuModalBar = document.getElementById("cMenuModalBar");
+      if (cMenuModalBar) {
+        cMenuModalBar.style.visibility =
+          Markdown.getMode() !== "preview" == false
+            ? "hidden"
+            : "visible"
+      }
     } else {
       selfDestruct();
     }
