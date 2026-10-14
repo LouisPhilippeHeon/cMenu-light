@@ -1,7 +1,9 @@
 import type cMenuPlugin from "src/plugin/main";
 import {
   Command,
+  setIcon,
   getIconIds,
+  FuzzyMatch,
   FuzzySuggestModal,
 } from "obsidian";
 
@@ -40,6 +42,13 @@ class ChooseFromIconList extends FuzzySuggestModal<string> {
         .trim()
         .replace(/-/gi, " ")
     );
+  }
+
+    renderSuggestion(icon: FuzzyMatch<string>, iconItem: HTMLElement): void {
+    const span = createSpan({ cls: "cMenuIconPick" });
+    iconItem.appendChild(span);
+    setIcon(span, icon.item);
+    super.renderSuggestion(icon, iconItem);
   }
 
   async onChooseItem(item: string): Promise<void> {

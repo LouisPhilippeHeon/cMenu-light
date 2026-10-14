@@ -73,7 +73,6 @@ export class cMenuSettingTab extends PluginSettingTab {
             this.plugin.settings.cMenuBottomValue = value;
             this.saveSettingsDebounced();
           })
-          .setDynamicTooltip();
       });
 
     containerEl.createDiv({ cls: "cMenuSettingsCommandsHeader" }, (div) => {
@@ -81,7 +80,6 @@ export class cMenuSettingTab extends PluginSettingTab {
       new ButtonComponent(div)
         .setIcon("plus")
         .setTooltip("Add")
-        .setClass("cMenuSettingsButton")
         .onClick(() => {
           new CommandPicker(this.plugin, () => this.display()).open();
         });

@@ -3,152 +3,131 @@ CMENU TOOLBAR
 ----------------------------------------------------------------*/
 
 #cMenuModalBar {
-  width: fit-content;
-  height: auto;
-  padding: var(--size-4-2) var(--size-4-3);
-  user-select: none;
-  border-radius: 32px;
-  position: absolute;
-  justify-content: space-around;
-  z-index: var(--layer-status-bar);
-  box-shadow: 0 var(--size-4-1) var(--size-4-6) rgb(from var(--background-primary) r g b / 80%);
-  border: 1px solid var(--background-modifier-border);
-  left: 0;
-  right: 0;
-  max-width: 90%;
-  overflow-x: auto;
-  display: flex;
-  justify-self: center;
+	width: fit-content;
+	height: auto;
+	padding: var(--size-4-2) var(--size-4-4);
+	user-select: none;
+	border-radius: 32px;
+	position: absolute;
+	z-index: var(--layer-status-bar);
+	box-shadow: 0 var(--size-4-1) var(--size-4-6) rgb(from var(--background-primary) r g b / 80%);
+	border: 1px solid var(--background-modifier-border);
+	left: 0;
+	right: 0;
+	max-width: 90%;
+	overflow-x: auto;
+	display: flex;
+	justify-self: center;
 
-  .cMenuCommandItem {
-    margin: 3px 2px;
-    box-shadow: none;
-    border-radius: 12px;
-    font-size: initial !important;
-    transition: background var(--anim-duration-fast) linear;
-    padding: var(--size-4-2);
+	.cMenuCommandItem {
+		margin: 0 2px;
+		height: fit-content;
+		box-shadow: none;
+		border-radius: 12px;
+		font-size: initial !important;
+		transition: background var(--anim-duration-fast) linear;
+		padding: var(--size-2-2) var(--size-4-2);
 
-    svg {
-      width: 1.3em;
-      height: 1.3em;
-    }
-  }
+		svg {
+			width: 1.3em;
+			height: 1.3em;
+		}
+	}
 
-  .cMenuCommandItem:hover {
-    background-color: var(--background-modifier-hover);
-  }
+	.cMenuCommandItem:hover {
+		background-color: var(--background-modifier-hover);
+	}
 }
-
-/*----------------------------------------------------------------
-CMENU SETTINGS BUTTONS
-----------------------------------------------------------------*/
-
-.modal.mod-settings button:not(.mod-cta):not(.mod-warning).cMenuSettingsButton.cMenuSettingsButtonAdd,
-button:not(.mod-cta):not(.mod-warning).cMenuSettingsButton.cMenuSettingsButtonAdd {
-  background-color: var(--interactive-accent);
-  color: var(--text-on-accent);
-}
-
-button.cMenuSettingsButton {
-  padding: 4px 14px;
-  border-radius: 6px;
-}
-
-.cMenuSettingsButton svg {
-  width: 1.3em;
-  height: 1.3em;
-  display: flex;
-}
-
-/*----------------------------------------------------------------
-CMENU SETTING ITEMS
-----------------------------------------------------------------*/
-.cMenuSettingsItem {
-  display: flex;
-  align-items: center;
-  gap: var(--size-4-2);
-  padding: var(--size-4-2) 0;
-}
-
-.cMenuSettingsItem + .cMenuSettingsItem {
-  border-top: 1px solid var(--background-modifier-border);
-}
-
-.cMenuSettingsItemIcon {
-  display: flex;
-  color: var(--icon-color);
-}
-
-.cMenuSettingsItemName {
-  flex: 1;
-  min-width: 0;
-}
-
-.cMenuSettingsItemHandle {
-  display: flex;
-  padding: var(--size-2-2);
-  color: var(--icon-color);
-  cursor: grab;
-}
-
-.sortable-ghost {
-  opacity: 0.4;
-  cursor: grabbing;
-}
-
-.sortable-chosen {
-  background-color: var(--background-primary);
-}
-
-.cMenuSettingsTabsContainer {
-  border-top: 1px solid var(--background-modifier-border);
-  border-bottom: 1px solid var(--background-modifier-border);
-}
-
-/*----------------------------------------------------------------
-CMENU CLASS CHANGES
-----------------------------------------------------------------*/
 
 .cMenuGlassAesthetic {
-  background: rgb(from var(--background-secondary) r g b / 75%);
-  backdrop-filter: blur(6px);
+	background: rgb(from var(--background-secondary) r g b / 75%);
+	backdrop-filter: blur(6px);
 
-  .cMenuCommandItem {
-    background-color: transparent;
-  }
+	.cMenuCommandItem {
+		background-color: transparent;
+	}
 }
 
 .cMenuDefaultAesthetic {
-  background-color: var(--background-primary);
+	background-color: var(--background-primary);
 
-  .cMenuCommandItem {
-    background-color: var(--background-primary-alt);
-  }
+	.cMenuCommandItem {
+		background-color: var(--background-primary-alt);
+	}
 }
 
 /*----------------------------------------------------------------
-CMENU ICONS
+CMENU SETTINGS
+----------------------------------------------------------------*/
+
+.cMenuSettingsCommandsHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin: var(--size-4-6) 0 var(--size-4-4);
+
+	h2 {
+		margin: 0;
+	}
+
+	button {
+		margin: 0 var(--size-4-4);
+		background-color: var(--interactive-accent);
+		color: var(--text-on-accent);
+	}
+}
+
+.cMenuSettingsTabsContainer {
+	border-radius: var(--radius-l);
+	overflow: hidden;
+
+	.cMenuSettingsItem {
+		display: flex;
+		align-items: center;
+		gap: var(--size-4-2);
+		padding: var(--size-4-3) var(--size-4-4);
+		background-color: var(--background-secondary);
+
+		.cMenuSettingsItemIcon {
+			padding-right: var(--size-4-2);
+			color: var(--icon-color);
+		}
+
+		.cMenuSettingsItemName {
+			margin-right: auto;
+			min-width: 0;
+			width: 256px;
+		}
+
+		.cMenuSettingsItemHandle {
+			display: flex;
+			padding: var(--size-2-2);
+			color: var(--icon-color);
+			cursor: grab;
+		}
+	}
+
+	.cMenuSettingsItem:not(:first-child) {
+		border-top: 1px solid var(--background-modifier-border);
+	}
+
+	.sortable-ghost {
+		opacity: 0.4;
+		cursor: grabbing;
+	}
+}
+
+/*----------------------------------------------------------------
+ICON PICKER
 ----------------------------------------------------------------*/
 
 .cMenuIconPick {
-  line-height: normal;
-  vertical-align: middle;
-  margin-right: 8px;
-}
+	line-height: normal;
+	vertical-align: middle;
+	margin-right: 8px;
 
-.cMenuIconPick svg {
-  width: 17px;
-  height: 17px;
-}
-
-/*----------------------------------------------------------------
-CMENU SUPPORT
-----------------------------------------------------------------*/
-
-.cDonationSection {
-  width: 60%;
-  height: 50vh;
-  margin: 0 auto;
-  text-align: center;
-  color: var(--text-normal);
+	svg {
+		width: 17px;
+		height: 17px;
+	}
 }
