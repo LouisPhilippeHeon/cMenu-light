@@ -52,15 +52,25 @@ class ChooseFromIconList extends FuzzySuggestModal<string> {
   }
 
   async onChooseItem(item: string): Promise<void> {
-    this.command.icon = item;
-    this.plugin.settings.menuCommands.push(this.command);
-    await this.plugin.saveSettings();
+    await addMenuCommand(this.plugin, this.command, item);
     this.onAdd();
-    console.log(
-      `%cCommand '${this.command.name}' was added to cMenu`,
-      "color: Violet"
-    );
   }
+}
+
+async function addMenuCommand(
+  plugin: cMenuPlugin,
+  command: Command,
+  icon: string
+): Promise<void> {
+  // Store a copy so the registered command itself is left untouched
+  const prefix = `${plugin.manifest.name}: `;
+  const name =
+    command.id.startsWith(`${plugin.manifest.id}:`) &&
+    command.name.startsWith(prefix)
+      ? command.name.slice(prefix.length)
+      : command.name;
+  plugin.settings.menuCommands.push({ id: command.id, name, icon });
+  await plugin.saveSettings();
 }
 
 export class CommandPicker extends FuzzySuggestModal<Command> {
@@ -83,13 +93,8 @@ export class CommandPicker extends FuzzySuggestModal<Command> {
 
   async onChooseItem(item: Command): Promise<void> {
     if (item.icon) {
-      this.plugin.settings.menuCommands.push(item);
-      await this.plugin.saveSettings();
+      await addMenuCommand(this.plugin, item, item.icon);
       this.onAdd();
-      console.log(
-        `%cCommand '${item.name}' was added to cMenu`,
-        "color: Violet"
-      );
     } else {
       new ChooseFromIconList(this.plugin, item, this.onAdd).open();
     }
