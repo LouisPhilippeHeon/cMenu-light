@@ -6,6 +6,7 @@ import {
   Setting,
   PluginSettingTab,
   TextComponent,
+  ButtonComponent,
   ExtraButtonComponent,
   setIcon,
   debounce,
@@ -25,11 +26,11 @@ export class cMenuSettingTab extends PluginSettingTab {
   display(): void {
     const { containerEl } = this;
     containerEl.empty();
-    containerEl.createEl("h2", { text: "Plugin Settings" });
+    containerEl.createEl("h2", { text: "Display settings" });
     new Setting(containerEl)
       .setName("cMenu append method")
       .setDesc(
-        "Choose where cMenu will append upon regeneration."
+        "Choose where cMenu gets attached."
       )
       .addDropdown((dropdown) => {
         let methods: Record<string, string> = {};
@@ -74,21 +75,17 @@ export class cMenuSettingTab extends PluginSettingTab {
           })
           .setDynamicTooltip();
       });
-    new Setting(containerEl)
-      .setName("cMenu commands")
-      .setDesc(
-        "Add a command onto cMenu from Obsidian's commands library. To reorder the commands, drag them by their handle. To rename them, edit their name. To delete them, use the delete button."
-      )
-      .addButton((addButton) => {
-        addButton
-          .setIcon("plus")
-          .setTooltip("Add")
-          .setClass("cMenuSettingsButton")
-          .onClick(() => {
-            new CommandPicker(this.plugin, () => this.display()).open();
-          });
-      });
-    containerEl.createEl("h2", { text: "Commands" });
+
+    containerEl.createDiv({ cls: "cMenuSettingsCommandsHeader" }, (div) => {
+      div.createEl("h2", { text: "Commands" });
+      new ButtonComponent(div)
+        .setIcon("plus")
+        .setTooltip("Add")
+        .setClass("cMenuSettingsButton")
+        .onClick(() => {
+          new CommandPicker(this.plugin, () => this.display()).open();
+        });
+    });
 
     const cMenuCommandsContainer = containerEl.createEl("div", {
       cls: "cMenuSettingsTabsContainer",
