@@ -1,22 +1,25 @@
 import type cMenuPlugin from "src/plugin/main";
 import { CommandPicker } from "src/modals/suggesterModals";
-import { App, Setting, PluginSettingTab } from "obsidian";
+import {
+  App,
+  Command,
+  Setting,
+  PluginSettingTab,
+  TextComponent,
+  ExtraButtonComponent,
+  setIcon,
+  debounce,
+} from "obsidian";
 import { APPEND_METHODS, AESTHETIC_STYLES } from "src/settings/settingsData";
-import { selfDestruct, cMenuPopover } from "src/modals/cMenuModal";
-import { debounce } from "obsidian";
 
 export class cMenuSettingTab extends PluginSettingTab {
   plugin: cMenuPlugin;
   appendMethod: string;
+  saveSettingsDebounced = debounce(() => this.plugin.saveSettings(), 200);
 
   constructor(app: App, plugin: cMenuPlugin) {
     super(app, plugin);
     this.plugin = plugin;
-    addEventListener("cMenu-NewCommand", () => {
-      selfDestruct();
-      cMenuPopover(app, this.plugin.settings);
-      this.display();
-    });
   }
 
   display(): void {
@@ -31,7 +34,7 @@ export class cMenuSettingTab extends PluginSettingTab {
     new Setting(containerEl)
       .setName("cMenu append method")
       .setDesc(
-        "Choose where cMenu will append upon regeneration. To see the change, hit the refresh button below, or in the status bar menu."
+        "Choose where cMenu will append upon regeneration."
       )
       .addDropdown((dropdown) => {
         let methods: Record<string, string> = {};
@@ -47,7 +50,7 @@ export class cMenuSettingTab extends PluginSettingTab {
     new Setting(containerEl)
       .setName("cMenu aesthetic")
       .setDesc(
-        "Choose between a glass morphism and default style for cMenu. To see the change, hit the refresh button below, or in the status bar menu."
+        "Choose between a glass morphism and default style for cMenu."
       )
       .addDropdown((dropdown) => {
         let aesthetics: Record<string, string> = {};
@@ -63,75 +66,56 @@ export class cMenuSettingTab extends PluginSettingTab {
           });
       });
     new Setting(containerEl)
-      .setName("cMenu columns")
-      .setDesc(
-        "Choose the number of columns per row to display on cMenu. To see the change, hit the refresh button below, or in the status bar menu."
-      )
+      .setName("cMenu position")
+      .setDesc("Distance between cMenu and the bottom of the workspace.")
       .addSlider((slider) => {
         slider
-          .setLimits(1, 18, 1)
-          .setValue(this.plugin.settings.cMenuNumRows)
-          .onChange(
-            debounce(
-              async (value) => {
-                this.plugin.settings.cMenuNumRows = value;
-                await this.plugin.saveSettings();
-              },
-              100,
-              true
-            )
-          )
+          .setLimits(0, 20, 0.25)
+          .setValue(this.plugin.settings.cMenuBottomValue)
+          .setInstant(true)
+          .onChange((value) => {
+            this.plugin.settings.cMenuBottomValue = value;
+            this.saveSettingsDebounced();
+          })
           .setDynamicTooltip();
-      });
-    new Setting(containerEl)
-      .setName("cMenu refresh")
-      .setDesc(
-        "cMenu will only refresh automatically after you have either added or deleted a command from it. To see UI changes to cMenu (above settings changes) use the refresh button. If you forget to refresh in settings, no worries. There is also a refresh button in the cMenu status bar menu."
-      )
-      .addButton((reloadButton) => {
-        reloadButton
-          .setIcon("cMenuReload")
-          .setClass("cMenuSettingsButton")
-          .setClass("cMenuSettingsButtonRefresh")
-          .setTooltip("Refresh")
-          .onClick(() => {
-            setTimeout(() => {
-              dispatchEvent(new Event("cMenu-NewCommand"));
-            }, 100);
-            console.log(`%ccMenu refreshed`, "color: Violet");
-          });
       });
     new Setting(containerEl)
       .setName("cMenu commands")
       .setDesc(
-        "Add a command onto cMenu from Obsidian's commands library. To reorder the commands, drag and drop the command items. To delete them, use the delete buttom to the right of the command item. cMenu will not automaticaly refresh after reordering commands. Use the refresh button above."
+        "Add a command onto cMenu from Obsidian's commands library. To reorder the commands, drag them by their handle. To rename them, edit their name. To delete them, use the delete button."
       )
       .addButton((addButton) => {
         addButton
-          .setIcon("cMenuAdd")
+          .setIcon("plus")
           .setTooltip("Add")
           .setClass("cMenuSettingsButton")
           .setClass("cMenuSettingsButtonAdd")
           .onClick(() => {
-            new CommandPicker(this.plugin).open();
-            setTimeout(() => {
-              dispatchEvent(new Event("cMenu-NewCommand"));
-            }, 100);
+            new CommandPicker(this.plugin, () => this.display()).open();
           });
       });
     const cMenuCommandsContainer = containerEl.createEl("div", {
       cls: "cMenuSettingsTabsContainer",
     });
-    // Drag and drop reordering
+    // Drag and drop reordering, initiated from the item handles
     let draggedEl: HTMLElement | null = null;
     let oldIndex = -1;
     const indexOf = (el: HTMLElement) =>
       Array.from(cMenuCommandsContainer.children).indexOf(el);
     cMenuCommandsContainer.addEventListener("dragstart", (event) => {
-      draggedEl = (event.target as HTMLElement).closest(".cMenuCommandItem");
+      draggedEl = (event.target as HTMLElement).closest(".cMenuSettingsItem");
       if (!draggedEl) return;
       oldIndex = indexOf(draggedEl);
-      event.dataTransfer?.setData("text/plain", "");
+      if (event.dataTransfer) {
+        event.dataTransfer.setData("text/plain", "");
+        // Drag the whole item rather than just the handle
+        const rect = draggedEl.getBoundingClientRect();
+        event.dataTransfer.setDragImage(
+          draggedEl,
+          event.clientX - rect.left,
+          event.clientY - rect.top
+        );
+      }
       draggedEl.addClass("sortable-chosen");
       // Let the browser snapshot the drag image before dimming the item
       setTimeout(() => draggedEl?.addClass("sortable-ghost"));
@@ -140,7 +124,7 @@ export class cMenuSettingTab extends PluginSettingTab {
       if (!draggedEl) return;
       event.preventDefault();
       const target = (event.target as HTMLElement).closest(
-        ".cMenuCommandItem"
+        ".cMenuSettingsItem"
       ) as HTMLElement | null;
       if (!target || target === draggedEl) return;
       const rect = target.getBoundingClientRect();
@@ -164,30 +148,37 @@ export class cMenuSettingTab extends PluginSettingTab {
       arrayResult.splice(newIndex, 0, removed);
       this.plugin.saveSettings();
     });
-    this.plugin.settings.menuCommands.forEach((newCommand: any) => {
-      const setting = new Setting(cMenuCommandsContainer)
-        .setClass("cMenuCommandItem")
-        .setName(newCommand.name)
-        .addButton((deleteButton) => {
-          deleteButton
-            .setIcon("cMenuDelete")
-            .setTooltip("Delete")
-            .setClass("cMenuSettingsButton")
-            .setClass("cMenuSettingsButtonDelete")
-            .onClick(async () => {
-              this.plugin.settings.menuCommands.remove(newCommand);
-              await this.plugin.saveSettings();
-              this.display();
-              setTimeout(() => {
-                dispatchEvent(new Event("cMenu-NewCommand"));
-              }, 100);
-              console.log(
-                `%cCommand '${newCommand.name}' was removed from cMenu`,
-                "color: #989cab"
-              );
-            });
+    this.plugin.settings.menuCommands.forEach((newCommand: Command) => {
+      const itemEl = cMenuCommandsContainer.createDiv({
+        cls: "cMenuSettingsItem",
+      });
+      setIcon(
+        itemEl.createDiv({ cls: "cMenuSettingsItemIcon" }),
+        newCommand.icon
+      );
+      new TextComponent(itemEl)
+        .setPlaceholder(newCommand.id)
+        .setValue(newCommand.name)
+        .onChange((name) => {
+          newCommand.name = name;
+          this.saveSettingsDebounced();
+        })
+        .inputEl.addClass("cMenuSettingsItemName");
+      new ExtraButtonComponent(itemEl)
+        .setIcon("lucide-x")
+        .setTooltip("Delete")
+        .onClick(async () => {
+          this.plugin.settings.menuCommands.remove(newCommand);
+          await this.plugin.saveSettings();
+          this.display();
+          console.log(
+            `%cCommand '${newCommand.name}' was removed from cMenu`,
+            "color: #989cab"
+          );
         });
-      setting.settingEl.draggable = true;
+      const handleEl = itemEl.createDiv({ cls: "cMenuSettingsItemHandle" });
+      setIcon(handleEl, "lucide-menu");
+      handleEl.draggable = true;
     });
     const cDonationDiv = containerEl.createEl("div", {
       cls: "cDonationSection",

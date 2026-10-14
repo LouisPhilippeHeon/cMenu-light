@@ -46,16 +46,7 @@ CMENU SETTINGS BUTTONS
 .modal.mod-settings button:not(.mod-cta):not(.mod-warning).cMenuSettingsButton.cMenuSettingsButtonAdd,
 button:not(.mod-cta):not(.mod-warning).cMenuSettingsButton.cMenuSettingsButtonAdd {
   background-color: var(--interactive-accent);
-}
-
-.modal.mod-settings button:not(.mod-cta):not(.mod-warning).cMenuSettingsButton.cMenuSettingsButtonDelete,
-button:not(.mod-cta):not(.mod-warning).cMenuSettingsButton.cMenuSettingsButtonDelete {
-  background-color: #989cab;
-}
-
-.modal.mod-settings button:not(.mod-cta):not(.mod-warning).cMenuSettingsButton.cMenuSettingsButtonRefresh,
-button:not(.mod-cta):not(.mod-warning).cMenuSettingsButton.cMenuSettingsButtonRefresh {
-  background-color: var(--text-accent);
+  color: var(--text-on-accent);
 }
 
 button.cMenuSettingsButton {
@@ -72,22 +63,32 @@ button.cMenuSettingsButton {
 /*----------------------------------------------------------------
 CMENU SETTING ITEMS
 ----------------------------------------------------------------*/
-.setting-item.cMenuCommandItem:first-child {
-  padding-top: 18px;
+.cMenuSettingsItem {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2);
+  padding: var(--size-4-2) 0;
 }
 
-.cMenuCommandItem {
+.cMenuSettingsItem + .cMenuSettingsItem {
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.cMenuSettingsItemIcon {
+  display: flex;
+  color: var(--icon-color);
+}
+
+.cMenuSettingsItemName {
+  flex: 1;
+  min-width: 0;
+}
+
+.cMenuSettingsItemHandle {
+  display: flex;
+  padding: var(--size-2-2);
+  color: var(--icon-color);
   cursor: grab;
-  padding: 18px 0 18px 0;
-}
-
-.sortable-fallback {
-  cursor: grabbing;
-  box-shadow: 0px 3px 32px rgb(31 38 135 / 15%);
-}
-
-.sortable-grab {
-  cursor: grabbing !important;
 }
 
 .sortable-ghost {
@@ -96,14 +97,7 @@ CMENU SETTING ITEMS
 }
 
 .sortable-chosen {
-  cursor: grabbing;
-  padding: 18px 0 18px 18px;
   background-color: var(--background-primary);
-}
-
-.sortable-drag {
-  cursor: grabbing;
-  box-shadow: 0px 3px 32px rgb(31 38 135 / 15%);
 }
 
 .cMenuSettingsTabsContainer {

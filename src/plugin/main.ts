@@ -9,7 +9,6 @@ import { wait } from "src/util/util";
 import { cMenuSettingTab } from "src/settings/settingsTab";
 import { selfDestruct, cMenuPopover } from "src/modals/cMenuModal";
 import { cMenuSettings, DEFAULT_SETTINGS } from "src/settings/settingsData";
-import addIcons from "src/icons/customIcons";
 
 export default class cMenuPlugin extends Plugin {
   app: App;
@@ -90,7 +89,6 @@ export default class cMenuPlugin extends Plugin {
 
   async onload(): Promise<void> {
     console.log("cMenu v" + this.manifest.version + " loaded");
-    addIcons();
     await this.loadSettings();
     this.generateCommands();
     this.addSettingTab(new cMenuSettingTab(this.app, this));
@@ -232,11 +230,28 @@ export default class cMenuPlugin extends Plugin {
     cMenuPopover(this.app, this.settings);
   };
 
+  refreshMenu(): void {
+    selfDestruct();
+    this.handlecMenu();
+  }
+
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    // Migrate commands saved under the original plugin ID
+    let migrated = false;
+    this.settings.menuCommands = this.settings.menuCommands.map((command) => {
+      if (!command.id.startsWith("cmenu-plugin:")) return command;
+      migrated = true;
+      return {
+        ...command,
+        id: command.id.replace(/^cmenu-plugin:/, `${this.manifest.id}:`),
+      };
+    });
+    if (migrated) await this.saveSettings();
   }
 
   async saveSettings() {
     await this.saveData(this.settings);
+    this.refreshMenu();
   }
 }

@@ -1,6 +1,6 @@
 import type { cMenuSettings } from "src/settings/settingsData";
 import { App, Command, MarkdownView, ButtonComponent } from "obsidian";
-import { setBottomValue, setMenuVisibility } from "src/util/statusBarConstants";
+import { setMenuVisibility } from "src/util/statusBarConstants";
 
 export function selfDestruct() {
   let cMenuModalBar = document.getElementById("cMenuModalBar");
@@ -16,14 +16,7 @@ export function cMenuPopover(app: App, settings: cMenuSettings): void {
   function createMenu() {
     const generateMenu = () => {
       var cMenu = createEl("div");
-      if (cMenu) {
-        cMenu.setAttribute(
-          "style",
-          `left: calc(50% - calc(${cMenu.offsetWidth}px / 2)); bottom: ${
-            settings.cMenuBottomValue
-          }em; grid-template-columns: ${"1fr ".repeat(settings.cMenuNumRows)}`
-        );
-      }
+      cMenu.style.bottom = `${settings.cMenuBottomValue}em`;
       cMenu.setAttribute("id", "cMenuModalBar");
       settings.aestheticStyle == "default"
         ? cMenu.addClass("cMenuDefaultAesthetic")
@@ -49,7 +42,6 @@ export function cMenuPopover(app: App, settings: cMenuSettings): void {
     if (Markdown) {
       if (!document.getElementById("cMenuModalBar")) {
         generateMenu();
-        setBottomValue(settings.cMenuBottomValue, settings.cMenuNumRows);
       }
       // Hide the menu while the focused note is in reading mode
       setMenuVisibility(Markdown.getMode() !== "preview");

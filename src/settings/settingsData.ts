@@ -7,7 +7,6 @@ export interface cMenuSettings {
   menuCommands: Command[];
   appendMethod: string;
   cMenuBottomValue: number;
-  cMenuNumRows: number;
 }
 
 export const DEFAULT_SETTINGS: cMenuSettings = {
@@ -15,51 +14,50 @@ export const DEFAULT_SETTINGS: cMenuSettings = {
   menuCommands: [
     {
       id: "cmenu-light:editor:toggle-bold",
-      name: "cMenu Light: Toggle bold",
+      name: "Toggle bold",
       icon: "bold-glyph",
     },
     {
       id: "cmenu-light:editor:toggle-italics",
-      name: "cMenu Light: Toggle italics",
+      name: "Toggle italics",
       icon: "italic-glyph",
     },
     {
       id: "cmenu-light:editor:toggle-strikethrough",
-      name: "cMenu Light: Toggle strikethrough",
+      name: "Toggle strikethrough",
       icon: "strikethrough-glyph",
     },
     {
       id: "cmenu-light:underline",
-      name: "cMenu Light: Toggle underline",
+      name: "Toggle underline",
       icon: "underline",
     },
     {
       id: "cmenu-light:superscript",
-      name: "cMenu Light: Toggle superscript",
+      name: "Toggle superscript",
       icon: "superscript",
     },
     {
       id: "cmenu-light:subscript",
-      name: "cMenu Light: Toggle subscript",
+      name: "Toggle subscript",
       icon: "subscript",
     },
     {
       id: "cmenu-light:editor:toggle-code",
-      name: "cMenu Light: Toggle code",
+      name: "Toggle code",
       icon: "code-glyph",
     },
     {
       id: "cmenu-light:codeblock",
-      name: "cMenu Light: Toggle codeblock",
+      name: "Toggle codeblock",
       icon: "square-code",
     },
     {
       id: "cmenu-light:editor:toggle-blockquote",
-      name: "cMenu Light: Toggle blockquote",
+      name: "Toggle blockquote",
       icon: "quote-glyph",
     },
   ],
   appendMethod: "workspace",
   cMenuBottomValue: 4.25,
-  cMenuNumRows: 9,
 };
