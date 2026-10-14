@@ -1,7 +1,7 @@
-export const setMenuVisibility = (cMenuVisibility: boolean) => {
+export const setMenuVisibility = (visible: boolean) => {
   let cMenuModalBar = document.getElementById("cMenuModalBar");
   if (cMenuModalBar) {
-    cMenuVisibility == false
+    visible == false
       ? (cMenuModalBar.style.visibility = "hidden")
       : (cMenuModalBar.style.visibility = "visible");
   }

@@ -6,7 +6,6 @@ export interface cMenuSettings {
   aestheticStyle: string;
   menuCommands: Command[];
   appendMethod: string;
-  cMenuVisibility: boolean;
   cMenuBottomValue: number;
   cMenuNumRows: number;
 }
@@ -61,7 +60,6 @@ export const DEFAULT_SETTINGS: cMenuSettings = {
     },
   ],
   appendMethod: "workspace",
-  cMenuVisibility: true,
   cMenuBottomValue: 4.25,
   cMenuNumRows: 9,
 };

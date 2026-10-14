@@ -1,6 +1,6 @@
 import type { cMenuSettings } from "src/settings/settingsData";
 import { App, Command, MarkdownView, ButtonComponent } from "obsidian";
-import { setBottomValue } from "src/util/statusBarConstants";
+import { setBottomValue, setMenuVisibility } from "src/util/statusBarConstants";
 
 export function selfDestruct() {
   let cMenuModalBar = document.getElementById("cMenuModalBar");
@@ -47,17 +47,12 @@ export function cMenuPopover(app: App, settings: cMenuSettings): void {
     };
     let Markdown = app.workspace.getActiveViewOfType(MarkdownView);
     if (Markdown) {
-      var cMenuModalBar = document.getElementById("cMenuModalBar");
-      if (cMenuModalBar) {
-        return;
-      } else {
+      if (!document.getElementById("cMenuModalBar")) {
         generateMenu();
-        let cMenuModalBar = document.getElementById("cMenuModalBar");
         setBottomValue(settings.cMenuBottomValue, settings.cMenuNumRows);
-        settings.cMenuVisibility == false
-          ? (cMenuModalBar.style.visibility = "hidden")
-          : (cMenuModalBar.style.visibility = "visible");
       }
+      // Hide the menu while the focused note is in reading mode
+      setMenuVisibility(Markdown.getMode() !== "preview");
     } else {
       selfDestruct();
     }
