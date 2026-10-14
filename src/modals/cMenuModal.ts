@@ -33,12 +33,23 @@ export function cMenuPopover(app: App, settings: cMenuSettings): void {
           .setClass("cMenuCommandItem")
           .setTooltip(item.name)
           .onClick(() => {
+            // A sidedock leaf may be focused: refocus the note before running
+            const leaf = app.workspace.getMostRecentLeaf();
+            if (
+              leaf?.view instanceof MarkdownView &&
+              !app.workspace.getActiveViewOfType(MarkdownView)
+            ) {
+              app.workspace.setActiveLeaf(leaf, { focus: true });
+            }
             //@ts-ignore
             app.commands.executeCommandById(item.id);
           });
       });
     };
-    let Markdown = app.workspace.getActiveViewOfType(MarkdownView);
+    // Use the most recent leaf of the root split (or pop-outs) so focusing
+    // a sidedock leaf doesn't hide the menu of the note being edited
+    const leaf = app.workspace.getMostRecentLeaf();
+    const Markdown = leaf?.view instanceof MarkdownView ? leaf.view : null;
     if (Markdown) {
       if (!document.getElementById("cMenuModalBar")) {
         generateMenu();
